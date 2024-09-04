@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Explorer Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ADD8E6;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, button {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: darkgreen;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>News Explorer Pro</h1>
+    <label for="topic">Enter Topic (optional):</label>
+    <input type="text" id="topic" placeholder="Enter topic">
+
+    <label for="keywords">Enter Keywords (comma-separated):</label>
+    <input type="text" id="keywords" placeholder="Enter keywords">
+
+    <label for="exclude">Keywords to Exclude (comma-separated):</label>
+    <input type="text" id="exclude" placeholder="Enter keywords to exclude">
+
+    <label for="start-date">Select Start Date:</label>
+    <input type="date" id="start-date">
+
+    <label for="end-date">Select End Date:</label>
+    <input type="date" id="end-date">
+
+    <button onclick="searchGoogle()">Search</button>
+</div>
+
+<script>
+    function searchGoogle() {
+        // Get user inputs
+        const topic = document.getElementById('topic').value.trim();
+        const keywords = document.getElementById('keywords').value.trim();
+        const excludeKeywords = document.getElementById('exclude').value.trim();
+        const startDate = new Date(document.getElementById('start-date').value).toLocaleDateString('en-US');
+        const endDate = new Date(document.getElementById('end-date').value).toLocaleDateString('en-US');
+
+        // Split keywords and format them
+        const keywordsList = keywords ? keywords.split(',').map(kw => kw.trim()).filter(Boolean) : [];
+        const formattedKeywords = keywordsList.map(kw => kw.includes(' ') ? `"${kw}"` : kw).join(' OR ');
+
+        // Split exclude keywords and format them
+        const excludeList = excludeKeywords ? excludeKeywords.split(',').map(kw => kw.trim()).filter(Boolean) : [];
+        const formattedExcludes = excludeList.map(kw => `-${kw}`).join(' ');
+
+        // Determine how to create the formatted query based on available inputs
+        let formattedQuery = '';
+        if (topic && formattedKeywords) {
+            formattedQuery = `"${topic}" AND (${formattedKeywords}) ${formattedExcludes}`;
+        } else if (topic) {
+            formattedQuery = `"${topic}" ${formattedExcludes}`;
+        } else if (formattedKeywords) {
+            formattedQuery = `${formattedKeywords} ${formattedExcludes}`;
+        } else {
+            formattedQuery = formattedExcludes;
+        }
+
+        // Create the search URL with the formatted query
+        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(formattedQuery)}&num=100&tbs=sbd:1,cdr:1,cd_min:${startDate},cd_max:${endDate}&tbm=nws`;
+
+        // Open the search URL in a new tab
+        window.open(searchUrl, '_blank');
+    }
+</script>
+
+</body>
+</html>

@@ -104,7 +104,7 @@
     function searchGoogle() {
         const topic = document.getElementById('topic').value.trim();
         const keywords = formatKeywords(document.getElementById('keywords').value.trim());
-        const excludeKeywords = formatKeywords(document.getElementById('exclude').value.trim());
+        const excludeKeywords = formatExcludeKeywords(document.getElementById('exclude').value.trim());
         const startDate = new Date(document.getElementById('start-date').value).toLocaleDateString('en-US');
         const endDate = new Date(document.getElementById('end-date').value).toLocaleDateString('en-US');
 
@@ -133,6 +133,16 @@
         }).join(' OR ');
     }
 
+    function formatExcludeKeywords(input) {
+        const excludeList = input.split(',').map(kw => kw.trim()).filter(Boolean);
+        return excludeList.map(kw => {
+            if (kw.includes(' ') && !kw.startsWith('"') && !kw.endsWith('"')) {
+                return `-"${kw}"`;
+            }
+            return `-${kw}`;
+        }).join(' ');
+    }
+
     function showQueries() {
         const dropdown = document.getElementById('queryDropdown');
         dropdown.style.display = dropdown.style.display === 'none' || dropdown.style.display === '' ? 'block' : 'none';
@@ -143,27 +153,27 @@
             'Fintech': {
                 topic: 'Fintech',
                 keywords: 'Financial Technology, innovation, startup, digital banking, blockchain, cryptocurrency, Insurtech, RegTech, GreenTech',
-                exclude: '"top ten", "top 10", "must have", "10 best", "what is", "why is"'
+                exclude: 'top ten, top 10, must have, 10 best, what is, why is'
             },
             'Information Technology': {
                 topic: 'IT',
                 keywords: 'IT Services, ITES, Semiconductor, BPO, KPO, IOT, Virtual Reality, cloud, digital transformation, automation, cybersecurity, SaaS',
-                exclude: '"top ten", "top 10", "must have", "10 best", "what is", "why is"'
+                exclude: 'top ten, top 10, must have, 10 best, what is, why is'
             },
             'Data Analytics': {
                 topic: 'Data Analytics',
                 keywords: 'Big Data, Business Intelligence, Predictive Analytics, Data Science, Data centers, finance, banking, healthcare, retail, manufacturing, machine learning',
-                exclude: '"top ten", "top 10", "must have", "10 best", "what is", "why is"'
+                exclude: 'top ten, top 10, must have, 10 best, what is, why is'
             },
             'Artificial Intelligence': {
                 topic: 'AI',
                 keywords: 'Artificial Intelligence, Machine Learning, ML, Deep Learning, Cloud computing, Quantum computing',
-                exclude: '"top ten", "top 10", "must have", "10 best", "what is", "why is"'
+                exclude: 'top ten, top 10, must have, 10 best, what is, why is'
             },
             'Regulatory Updates': {
                 topic: 'Regulatory',
                 keywords: 'monetary, fiscal, Law, tax, SEBI, RBI, CBIC, MCA, Finance Minister, policy, update, reform, economy',
-                exclude: '"top ten", "top 10", "must have", "10 best", "what is", "why is"'
+                exclude: 'top ten, top 10, must have, 10 best, what is, why is'
             },
             'Company ESG': {
                 topic: 'Tata Chemicals',
